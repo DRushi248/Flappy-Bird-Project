@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
   // Reject if already 2 players
-  if (Object.keys(players).length > 2) {
+  if (Object.keys(players).length >= 2) {
     socket.emit("roomFull");
     socket.disconnect();
     return;
