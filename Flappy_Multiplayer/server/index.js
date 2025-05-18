@@ -3,22 +3,31 @@ const http = require('http');
 const cors = require('cors');
 const {Server} = require('socket.io');
 
+require('dotenv').config(); // to read .env in dev (optional)
+
+
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "*",
+    methods: ["GET", "POST"],
+  })
+);
 
 const port = process.env.PORT || 3001;
 
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://flappy-bird-project-mebk0zl9q-rushis-projects-69f0fb24.vercel.app/",
+        origin: process.env.CLIENT_URL || "*",
         methods: ["GET", "POST"]
     },
 });
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+  res.send("Socket.IO server is running!");
 });
+
 
 let players = {};
 
@@ -26,7 +35,6 @@ let players = {};
 
 io.on("connection", (socket) => {
 
-    socket.broadcast.emit(`I'm there to beat you. Hahaha`)
   console.log("User connected:", socket.id);
 
   // Reject if already 2 players
