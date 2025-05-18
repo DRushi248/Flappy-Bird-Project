@@ -63,7 +63,10 @@ export default function Multiplayer({ onRestart }) {
 
   // Initialize socket connection
   useEffect(() => {
-    const newSocket = io("http://localhost:3001");
+    
+    const newSocket = io(process.env.REACT_APP_BACKEND_URL);
+
+    // const newSocket = io("http://localhost:3001");
     socketRef.current = newSocket;
 
     newSocket.on("connect", () => {
