@@ -63,8 +63,8 @@ export default function Multiplayer({ onRestart }) {
 
   // Initialize socket connection
   useEffect(() => {
-    
-    const newSocket = io(process.env.REACT_APP_BACKEND_URL);
+
+    const newSocket = io("https://flappy-bird-project.onrender.com");
 
     // const newSocket = io("http://localhost:3001");
     socketRef.current = newSocket;
