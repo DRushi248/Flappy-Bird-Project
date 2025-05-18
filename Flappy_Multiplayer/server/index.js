@@ -11,7 +11,7 @@ const port = process.env.PORT || 3001;
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: "https://flappy-bird-project-mebk0zl9q-rushis-projects-69f0fb24.vercel.app/",
         methods: ["GET", "POST"]
     },
 });
