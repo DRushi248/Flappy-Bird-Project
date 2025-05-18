@@ -45,6 +45,14 @@ export default function Game({ onRestart }) {
       setGameOver(false);
     };
 
+    useEffect(() => {
+      const storedHighScore = localStorage.getItem("highScore");
+      if (storedHighScore) {
+        highScoreRef.current = parseInt(storedHighScore);
+        setHighScore(highScoreRef.current);
+      }
+    }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
