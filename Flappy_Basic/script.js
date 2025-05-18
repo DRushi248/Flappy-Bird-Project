@@ -43,7 +43,7 @@ let score = 0;
 window.onload = function() {
 
     alert("Press the Spacebar or Arrow Up to make the bird fly.");
-    
+
     board = document.getElementById("board");
     board.height = boardHeight;
     board.width = boardWidth;
@@ -69,6 +69,8 @@ window.onload = function() {
     requestAnimationFrame(update);
     setInterval(placePipes, 1500); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
+    document.addEventListener("touchstart", handleTouch);
+
 }
 
 function update() {
@@ -166,6 +168,18 @@ function moveBird(e) {
         }
     }
 }
+
+function handleTouch() {
+    velocityY = -6;
+
+    if (gameOver) {
+        bird.y = birdY;
+        pipeArray = [];
+        score = 0;
+        gameOver = false;
+    }
+}
+
 
 function detectCollision(a, b) {
     return a.x < b.x + b.width &&   //a's top left corner doesn't reach b's top right corner
