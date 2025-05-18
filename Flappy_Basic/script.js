@@ -69,7 +69,7 @@ window.onload = function() {
     requestAnimationFrame(update);
     setInterval(placePipes, 1500); //every 1.5 seconds
     document.addEventListener("keydown", moveBird);
-    document.addEventListener("touchstart", handleTouch);
+    board.addEventListener("touchstart", handleTouch);
 
 }
 
@@ -169,7 +169,9 @@ function moveBird(e) {
     }
 }
 
-function handleTouch() {
+function handleTouch(e) {
+    e.preventDefault();  // prevent scrolling or zooming on touch
+
     velocityY = -6;
 
     if (gameOver) {
@@ -179,6 +181,7 @@ function handleTouch() {
         gameOver = false;
     }
 }
+
 
 
 function detectCollision(a, b) {
