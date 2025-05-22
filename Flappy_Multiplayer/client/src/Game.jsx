@@ -250,7 +250,9 @@ export default function Game({ onRestart }) {
                     transform: "translate(-50%, -50%)",
                     fontWeight: "bold",
                     minWidth: 120,
-                    minHeight: 50
+                    minHeight: 50,
+                    zIndex: 9999,
+                    pointerEvents: 'auto'
                 }}
             >
                 Home
