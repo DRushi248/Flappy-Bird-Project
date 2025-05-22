@@ -150,7 +150,12 @@ export default function Game({ onRestart }) {
     };
 
     const moveBird = (e) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === "KeyX") {
+      if (e.type === "touchstart") {
+        e.preventDefault();
+        velocityY.current = -6;
+        if(gameOver) resetGame();
+      }
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === "KeyX" || e.type === "touchstart") {
         velocityY.current = -6;
         if (gameOver) {
           resetGame();
@@ -161,11 +166,14 @@ export default function Game({ onRestart }) {
 
 
     document.addEventListener('keydown', moveBird);
+    document.addEventListener("touchstart", moveBird, { passive: false });
+
     pipeIntervalId = setInterval(addPipes, 1500);
     draw();
 
     return () => {
       document.removeEventListener('keydown', moveBird);
+      document.removeEventListener('touchstart', moveBird);
       clearInterval(pipeIntervalId);
       cancelAnimationFrame(animationFrameId);
     };
@@ -189,6 +197,19 @@ export default function Game({ onRestart }) {
       >
 
       </canvas>
+      {!gameOver && (
+          <Box
+            position="absolute"
+            top={0}
+            left={0}
+            width={boardWidth}
+            height={boardHeight}
+            zIndex={2}
+            onTouchStart={(e) => e.preventDefault()} // Stop browser scroll
+            sx={{ touchAction: "none" }}
+          />
+        )}
+
         {gameOver && (
         <>
             <Box

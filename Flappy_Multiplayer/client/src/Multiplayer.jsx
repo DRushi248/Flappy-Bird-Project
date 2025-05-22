@@ -43,6 +43,9 @@ export default function Multiplayer({ onRestart }) {
   const [gameOver, setGameOver] = useState(false);
   const [highScore, setHighScore] = useState(0);
 
+  const [playerCount, setPlayerCount] = useState(0);
+
+
   // Reset the game state
   const resetGame = () => {
     bird.current.y = boardHeight / 2;
@@ -74,7 +77,7 @@ export default function Multiplayer({ onRestart }) {
       console.log("Connected as", newSocket.id);
     });
 
-    newSocket.on("roomFull", () => {
+    newSocket.on("roomFull", () => {                
       setRoomFull(true);
       alert("Room is full. Try again later.");
       navigate("/");
@@ -82,6 +85,12 @@ export default function Multiplayer({ onRestart }) {
 
     newSocket.on("playerJoined", (count) => {
       console.log("Players in room:", count);
+      setPlayerCount(count);
+    });
+
+    newSocket.on("playerLeft", (count) => {
+      setPlayerCount(count);
+      console.log("Players remaining:", count);
     });
 
     newSocket.on("scores", (playerArray) => {
@@ -208,6 +217,12 @@ export default function Multiplayer({ onRestart }) {
 
     // Handle key press
     const moveBird = (e) => {
+      if (e.type === "touchstart") {
+        e.preventDefault();
+        velocityY.current = -6;
+        if (gameOver) resetGame();
+        return;
+      }
       if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyX") {
         velocityY.current = -6;
         if (gameOver) {
@@ -217,11 +232,14 @@ export default function Multiplayer({ onRestart }) {
     };
 
     document.addEventListener("keydown", moveBird);
+    document.addEventListener("touchstart", moveBird, { passive: false });
+
     pipeIntervalId = setInterval(addPipes, 1500);
     draw();
 
     return () => {
       document.removeEventListener("keydown", moveBird);
+      document.removeEventListener('touchstart', moveBird);
       clearInterval(pipeIntervalId);
       cancelAnimationFrame(animationFrameId);
     };
@@ -259,6 +277,19 @@ export default function Multiplayer({ onRestart }) {
           height={boardHeight}
           style={{ border: "4px solid black", display: "block" }}
         ></canvas>
+
+        {!gameOver && (
+                  <Box
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    width={boardWidth}
+                    height={boardHeight}
+                    zIndex={2}
+                    onTouchStart={(e) => e.preventDefault()} // Stop browser scroll
+                    sx={{ touchAction: "none" }}
+                  />
+        )}
 
         {gameOver && (
           <>
@@ -316,20 +347,21 @@ export default function Multiplayer({ onRestart }) {
         )}
       </Box>
 
-      {/* Show all players' scores */}
-      <Box mt={2}>
-        <Typography variant="h6" gutterBottom>
-          Players in Room
+      {/* Players in the room */}
+    <Box mt={2}>
+      <Typography variant="h6" gutterBottom>
+        Players in Room: {playerCount}
+      </Typography>
+      {players.map((p) => (
+        <Typography
+          key={p.playerId}
+          color={p.playerId === playerId ? "primary" : "textSecondary"}
+        >
+          {p.playerId === playerId ? "You" : "Player"}: {p.score}
         </Typography>
-        {players.map((p) => (
-          <Typography
-            key={p.playerId}
-            color={p.playerId === playerId ? "primary" : "textSecondary"}
-          >
-            {p.playerId === playerId ? "You" : "Player"}: {p.score}
-          </Typography>
-        ))}
-      </Box>
+      ))}
+    </Box>
+
     </div>
   );
 }
